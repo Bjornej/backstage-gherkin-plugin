@@ -14,13 +14,11 @@
  * limitations under the License.
  */
 /**
- * Common types and functionalities for the ADR plugin.
+ * Common types and functionalities for the gherkin plugin.
  * @packageDocumentation
  */
 import { Entity, getEntitySourceLocation } from '@backstage/catalog-model';
 import { ScmIntegrationRegistry } from '@backstage/integration';
-
-export * from './search';
 
 /**
  * Gherkin plugin annotation.
@@ -50,16 +48,16 @@ export const isGherkinAvailable = (entity: Entity) =>
 export const getGherkinLocationUrl = (
   entity: Entity,
   scmIntegration: ScmIntegrationRegistry,
-  adrFilePath?: String,
+  gherkinFilePath?: String,
 ) => {
   if (!isGherkinAvailable(entity)) {
-    throw new Error(`Missing ADR annotation: ${ANNOTATION_GHERKIN_LOCATION}`);
+    throw new Error(`Missing Gherkin annotation: ${ANNOTATION_GHERKIN_LOCATION}`);
   }
 
   let url = getGherkinLocationDir(entity)!.replace(/\/$/, '');
 
-  if (adrFilePath) {
-    url = `${url}/${adrFilePath}`;
+  if (gherkinFilePath) {
+    url = `${url}/${gherkinFilePath}`;
   }
 
   return scmIntegration.resolveUrl({
@@ -75,7 +73,7 @@ export const getGherkinLocationUrl = (
 export type GherkinFilePathFilterFn = (path: string) => boolean;
 
 /**
- * File path filter for MADR filename formats
+ * File path filter for gherkin filename formats
  * @public
  */
 export const gherkinFilePathFilter: GherkinFilePathFilterFn = (path: string) =>

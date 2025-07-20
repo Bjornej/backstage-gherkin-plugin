@@ -15,15 +15,13 @@
  */
 
 /**
- * Architecture Decision Records backend plugin.
+ * Gherkin backend plugin.
  *
  * @packageDocumentation
  */
 
 export * from './service';
 export {
-  adrPlugin as default,
-  adrExtensionPoint,
-  type AdrExtensionPoint,
+  gherkinPlugin as default,
 } from './plugin';
 export * from './deprecated';

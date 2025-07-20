@@ -19,43 +19,15 @@ import {
   createExtensionPoint,
 } from '@backstage/backend-plugin-api';
 import { createRouter } from './service/router';
-import { AdrInfoParser } from '@backstage-community/plugin-adr-common';
 
 /**
- * Options for {@link adrExtensionPoint}.
+ * Gherkin backend plugin
  *
  * @public
  */
-export type AdrExtensionPoint = {
-  /**
-   * Allows you to parse files into different ADR formats.
-   */
-  setAdrInfoParser(adrInfoParser: AdrInfoParser): void;
-};
-
-/**
- * Extension point for customizing how ADRs are shaped for the backend.
- *
- * @public
- */
-export const adrExtensionPoint = createExtensionPoint<AdrExtensionPoint>({
-  id: 'adr.parser.extension',
-});
-
-/**
- * ADR backend plugin
- *
- * @public
- */
-export const adrPlugin = createBackendPlugin({
-  pluginId: 'adr',
+export const gherkinPlugin = createBackendPlugin({
+  pluginId: 'gherkin',
   register(env) {
-    let parser: AdrInfoParser | undefined;
-    env.registerExtensionPoint(adrExtensionPoint, {
-      setAdrInfoParser(adrInfoParser: AdrInfoParser) {
-        parser = adrInfoParser;
-      },
-    });
     env.registerInit({
       deps: {
         logger: coreServices.logger,
@@ -69,14 +41,8 @@ export const adrPlugin = createBackendPlugin({
             logger,
             reader,
             cacheClient: cache,
-            parser,
           }),
         );
-
-        httpRouter.addAuthPolicy({
-          path: '/image',
-          allow: 'user-cookie',
-        });
       },
     });
   },

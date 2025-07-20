@@ -18,29 +18,23 @@ import { NotModifiedError, stringifyError } from '@backstage/errors';
 import express from 'express';
 import Router from 'express-promise-router';
 import {
-  AdrInfo,
-  AdrInfoParser,
-  madrParser,
-} from '@backstage-community/plugin-adr-common';
-import {
   CacheService,
   LoggerService,
   UrlReaderService,
 } from '@backstage/backend-plugin-api';
 
 /** @public */
-export type AdrRouterOptions = {
+export type GherkinRouterOptions = {
   reader: UrlReaderService;
   cacheClient: CacheService;
   logger: LoggerService;
-  parser?: AdrInfoParser;
 };
 
 /** @public */
 export async function createRouter(
-  options: AdrRouterOptions,
+  options: GherkinRouterOptions,
 ): Promise<express.Router> {
-  const { reader, cacheClient, logger, parser } = options;
+  const { reader, cacheClient, logger } = options;
 
   const router = Router();
   router.use(express.json());
@@ -74,14 +68,10 @@ export async function createRouter(
             const fileContent = await file.content();
 
             try {
-              const adrInfo: AdrInfo = parser
-                ? parser(fileContent.toString())
-                : madrParser(fileContent.toString());
               return {
                 type: 'file',
                 name: file.path.substring(file.path.lastIndexOf('/') + 1),
                 path: file.path,
-                ...adrInfo,
               };
             } catch (e: any) {
               logger.error(`Failed to parse ${file.path}: ${e.message}`);
@@ -105,7 +95,7 @@ export async function createRouter(
       }
 
       const message = stringifyError(error);
-      logger.error(`Unable to fetch ADRs from ${urlToProcess}: ${message}`);
+      logger.error(`Unable to fetch Gherkins from ${urlToProcess}: ${message}`);
       res.statusCode = 500;
       res.json({ message });
     }
@@ -144,70 +134,7 @@ export async function createRouter(
       }
 
       const message = stringifyError(error);
-      logger.error(`Unable to fetch ADRs from ${urlToProcess}: ${message}`);
-      res.statusCode = 500;
-      res.json({ message });
-    }
-  });
-
-  router.get('/image', async (req, res) => {
-    const urlToProcess = req.query.url as string;
-    if (!urlToProcess) {
-      res.statusCode = 400;
-      res.json({ message: 'No URL provided' });
-      return;
-    }
-
-    const imageTypeMap: Record<string, string> = {
-      png: 'image/png',
-      jpg: 'image/jpeg',
-      jpeg: 'image/jpeg',
-      gif: 'image/gif',
-      svg: 'image/svg+xml',
-      webp: 'image/webp',
-    };
-
-    const imageType = urlToProcess.match(/\.([a-z0-9]+)(\?.*)?$/i);
-    if (!(imageType && imageType[1])) {
-      res.statusCode = 400;
-      res.json({ message: 'No URL to image' });
-      return;
-    }
-    if (!imageTypeMap[imageType[1].toLowerCase()]) {
-      res.statusCode = 400;
-      res.json({ message: `Image type ${imageType[1]} is not supported` });
-      return;
-    }
-    const contentType = imageTypeMap[imageType[1].toLowerCase()];
-
-    const cachedFileContent = (await cacheClient.get(urlToProcess)) as {
-      data: string;
-      etag: string;
-    };
-    try {
-      const fileGetResponse = await reader.readUrl(urlToProcess, {
-        etag: cachedFileContent?.etag,
-      });
-      const fileBuffer = await fileGetResponse.buffer();
-      const data = fileBuffer.toString('base64');
-
-      await cacheClient.set(urlToProcess, {
-        data,
-        etag: fileGetResponse.etag,
-      });
-      res.setHeader('Content-Type', contentType);
-      res.end(data, 'base64');
-    } catch (error) {
-      if (cachedFileContent && error.name === NotModifiedError.name) {
-        res.setHeader('Content-Type', contentType);
-        res.end(cachedFileContent.data, 'base64');
-        return;
-      }
-
-      const message = stringifyError(error);
-      logger.error(
-        `Unable to fetch ADRs images from ${urlToProcess}: ${message}`,
-      );
+      logger.error(`Unable to fetch gherkins from ${urlToProcess}: ${message}`);
       res.statusCode = 500;
       res.json({ message });
     }
