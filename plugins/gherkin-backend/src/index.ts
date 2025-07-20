@@ -24,4 +24,3 @@ export * from './service';
 export {
   gherkinPlugin as default,
 } from './plugin';
-export * from './deprecated';

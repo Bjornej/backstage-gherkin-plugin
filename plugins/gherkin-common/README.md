@@ -1,3 +1,3 @@
-# ADR Common
+# Gherkin Common
 
-Common types and functionalities for the ADR plugin.
+Common types and functionalities for the Gherkin plugin.
