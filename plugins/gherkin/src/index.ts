@@ -20,15 +20,14 @@
  * @packageDocumentation
  */
 
-export { adrApiRef, AdrClient } from './api';
+export { gherkinApiRef, GherkinClient } from './api';
 export type {
-  AdrApi,
-  AdrClientOptions,
-  AdrFileInfo,
-  AdrListResult,
-  AdrReadResult,
+  GherkinApi,
+  GherkinClientOptions,
+  GherkinFileInfo,
+  GherkinListResult,
+  GherkinReadResult,
 } from './api';
-export { isAdrAvailable } from '@backstage-community/plugin-adr-common';
-export * from './components/AdrReader';
-export { adrPlugin, AdrSearchResultListItem, EntityAdrContent } from './plugin';
-export type { AdrSearchResultListItemProps } from './search';
+export { isGherkinAvailable } from '@backstage-community/plugin-adr-common';
+export * from './components/GherkinReader';
+export { gherkinPlugin, EntityGherkinContent } from './plugin';

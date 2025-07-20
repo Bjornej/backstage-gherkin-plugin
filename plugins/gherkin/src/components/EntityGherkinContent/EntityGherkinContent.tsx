@@ -33,12 +33,12 @@ import {
 import { configApiRef, useApi, useRouteRef } from '@backstage/core-plugin-api';
 import { scmIntegrationsApiRef } from '@backstage/integration-react';
 import {
-  AdrFilePathFilterFn,
-  ANNOTATION_ADR_LOCATION,
-  getAdrLocationUrl,
-  isAdrAvailable,
-  madrFilePathFilter,
-} from '@backstage-community/plugin-adr-common';
+  GherkinFilePathFilterFn,
+  ANNOTATION_GHERKIN_LOCATION,
+  getGherkinLocationUrl,
+  isGherkinAvailable,
+  gherkinFilePathFilter,
+} from '@backstage-community/plugin-gherkin-common';
 import {
   useEntity,
   MissingAnnotationEmptyState,
@@ -57,48 +57,36 @@ import ExpandLess from '@material-ui/icons/ExpandLess';
 import ExpandMore from '@material-ui/icons/ExpandMore';
 import FolderIcon from '@material-ui/icons/Folder';
 
-import { adrApiRef, AdrFileInfo } from '../../api';
+import { gherkinApiRef, GherkinFileInfo } from '../../api';
 import { rootRouteRef } from '../../routes';
-import { AdrContentDecorator, AdrReader } from '../AdrReader';
+import { GherkinContentDecorator, GherkinReader } from '../GherkinReader';
 import { useTranslationRef } from '@backstage/core-plugin-api/alpha';
-import { adrTranslationRef } from '../../translations';
+import { gherkinTranslationRef } from '../../translations';
 
 const useStyles = makeStyles((theme: Theme) => ({
-  adrMenu: {
+  gherkinMenu: {
     backgroundColor: theme.palette.background.paper,
   },
-  adrContainerTitle: {
+  gherkinContainerTitle: {
     color: theme.palette.grey[700],
     marginBottom: theme.spacing(1),
   },
-  adrBox: {
+  gherkinBox: {
     display: 'flex',
     justifyContent: 'space-between',
     marginTop: '10px',
   },
 }));
 
-const AdrListContainer = (props: {
-  adrs: AdrFileInfo[];
-  selectedAdr: string;
+const GherkinListContainer = (props: {
+  gherkins: GherkinFileInfo[];
+  selectedGherkin: string;
   title: string;
 }) => {
-  const { adrs, selectedAdr, title } = props;
+  const { gherkins, selectedGherkin, title } = props;
   const classes = useStyles();
   const rootLink = useRouteRef(rootRouteRef);
   const [open, setOpen] = React.useState(true);
-
-  const getChipColor = (status: string) => {
-    switch (status) {
-      case 'accepted':
-        return 'primary';
-      case 'rejected':
-      case 'deprecated':
-        return 'secondary';
-      default:
-        return 'default';
-    }
-  };
 
   const handleClick = () => {
     setOpen(!open);
@@ -109,7 +97,7 @@ const AdrListContainer = (props: {
       {title && (
         <ListItem
           button
-          className={classes.adrContainerTitle}
+          className={classes.gherkinContainerTitle}
           onClick={handleClick}
         >
           <ListItemIcon>
@@ -121,32 +109,19 @@ const AdrListContainer = (props: {
       )}
       <Collapse in={open} timeout="auto" unmountOnExit>
         <List dense>
-          {adrs.map((adr, idx) => (
+          {gherkins.map((gherkin, idx) => (
             <ListItem
               button
               component={Link}
               key={idx}
-              selected={selectedAdr === adr.path}
-              to={`${rootLink()}?record=${adr.path}`}
+              selected={selectedGherkin === gherkin.path}
+              to={`${rootLink()}?record=${gherkin.path}`}
             >
               <ListItemText
-                primary={adr.title ?? adr?.name.replace(/\.md$/, '')}
+                primary={gherkin.title ?? gherkin?.name.replace(/\.md$/, '')}
                 primaryTypographyProps={{
                   style: { whiteSpace: 'normal' },
                 }}
-                secondary={
-                  <Box className={classes.adrBox}>
-                    {adr.date}
-                    {adr.status && (
-                      <Chip
-                        color={getChipColor(adr.status)}
-                        label={adr.status}
-                        size="small"
-                        variant="outlined"
-                      />
-                    )}
-                  </Box>
-                }
               />
             </ListItem>
           ))}
@@ -157,41 +132,41 @@ const AdrListContainer = (props: {
 };
 
 /**
- * Component for browsing ADRs on an entity page.
+ * Component for browsing gherkins on an entity page.
  * @public
  */
-export const EntityAdrContent = (props: {
-  contentDecorators?: AdrContentDecorator[];
-  filePathFilterFn?: AdrFilePathFilterFn;
+export const EntityGherkinContent = (props: {
+  contentDecorators?: GherkinContentDecorator[];
+  filePathFilterFn?: GherkinFilePathFilterFn;
 }) => {
   const { contentDecorators, filePathFilterFn } = props;
   const classes = useStyles();
   const { entity } = useEntity();
-  const [adrList, setAdrList] = useState<AdrFileInfo[]>([]);
+  const [gherkinList, setGherkinList] = useState<GherkinFileInfo[]>([]);
   const [searchParams, setSearchParams] = useSearchParams();
   const scmIntegrations = useApi(scmIntegrationsApiRef);
-  const adrApi = useApi(adrApiRef);
-  const entityHasAdrs = isAdrAvailable(entity);
-  const { t } = useTranslationRef(adrTranslationRef);
+  const gherkinApi = useApi(gherkinApiRef);
+  const entityHasGherkins = isGherkinAvailable(entity);
+  const { t } = useTranslationRef(gherkinTranslationRef);
 
   const config = useApi(configApiRef);
   const appSupportConfigured = config?.getOptionalConfig('app.support');
 
   const { value, loading, error } = useAsync(async () => {
-    const url = getAdrLocationUrl(entity, scmIntegrations);
-    return adrApi.listAdrs(url);
+    const url = getGherkinLocationUrl(entity, scmIntegrations);
+    return gherkinApi.listGherkins(url);
   }, [entity, scmIntegrations]);
 
-  const selectedAdr =
-    adrList.find(adr => adr.path === searchParams.get('record'))?.path ?? '';
+  const selectedGherkin =
+    gherkinList.find(gherkin => gherkin.path === searchParams.get('record'))?.path ?? '';
 
-  const adrSubDirectoryFunc = (adr: AdrFileInfo) => {
-    return adr.path.split('/').slice(0, -1).join('/');
+  const gherkinSubDirectoryFunc = (gherkin: GherkinFileInfo) => {
+    return gherkin.path.split('/').slice(0, -1).join('/');
   };
 
   useEffect(() => {
-    if (adrList.length && !selectedAdr) {
-      searchParams.set('record', adrList[0].path);
+    if (gherkinList.length && !selectedGherkin) {
+      searchParams.set('record', gherkinList[0].path);
       setSearchParams(searchParams, { replace: true });
     }
   });
@@ -201,19 +176,19 @@ export const EntityAdrContent = (props: {
       return;
     }
 
-    const adrs: AdrFileInfo[] = value.data.filter(
-      (item: AdrFileInfo) =>
+    const gherkins: GherkinFileInfo[] = value.data.filter(
+      (item: GherkinFileInfo) =>
         item.type === 'file' &&
         (filePathFilterFn
           ? filePathFilterFn(item.path)
-          : madrFilePathFilter(item.path)),
+          : gherkinFilePathFilter(item.path)),
     );
 
-    setAdrList(adrs);
+    setGherkinList(gherkins);
   }, [filePathFilterFn, value]);
 
-  const adrListGrouped = Object.entries(
-    groupBy(adrList, adrSubDirectoryFunc),
+  const gherkinListGrouped = Object.entries(
+    groupBy(gherkinList, gherkinSubDirectoryFunc),
   ).sort();
 
   return (
@@ -222,29 +197,29 @@ export const EntityAdrContent = (props: {
         {appSupportConfigured && <SupportButton />}
       </ContentHeader>
 
-      {!entityHasAdrs && (
-        <MissingAnnotationEmptyState annotation={ANNOTATION_ADR_LOCATION} />
+      {!entityHasGherkins && (
+        <MissingAnnotationEmptyState annotation={ANNOTATION_GHERKIN_LOCATION} />
       )}
 
       {loading && <Progress />}
 
-      {entityHasAdrs && !loading && error && (
+      {entityHasGherkins && !loading && error && (
         <WarningPanel title={t('failedToFetch')} message={error?.message} />
       )}
 
-      {entityHasAdrs &&
+      {entityHasGherkins &&
         !loading &&
         !error &&
-        (adrList.length ? (
+        (gherkinList.length ? (
           <Grid container direction="row">
             <Grid item xs={3}>
               <InfoCard>
-                <List className={classes.adrMenu} dense>
-                  {adrListGrouped.map(([title, adrs], idx) => (
-                    <AdrListContainer
-                      adrs={adrs}
+                <List className={classes.gherkinMenu} dense>
+                  {gherkinListGrouped.map(([title, gherkins], idx) => (
+                    <GherkinListContainer
+                      gherkins={gherkins}
                       key={idx}
-                      selectedAdr={selectedAdr}
+                      selectedGherkin={selectedGherkin}
                       title={title}
                     />
                   ))}
@@ -252,7 +227,7 @@ export const EntityAdrContent = (props: {
               </InfoCard>
             </Grid>
             <Grid item xs={9}>
-              <AdrReader adr={selectedAdr} decorators={contentDecorators} />
+              <GherkinReader gherkin={selectedGherkin} decorators={contentDecorators} />
             </Grid>
           </Grid>
         ) : (

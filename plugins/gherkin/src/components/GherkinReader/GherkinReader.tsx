@@ -23,71 +23,71 @@ import {
 } from '@backstage/core-components';
 import { discoveryApiRef, useApi } from '@backstage/core-plugin-api';
 import { scmIntegrationsApiRef } from '@backstage/integration-react';
-import { getAdrLocationUrl } from '@backstage-community/plugin-adr-common';
+import { getGherkinLocationUrl } from '@backstage-community/plugin-gherkin-common';
 import { useEntity } from '@backstage/plugin-catalog-react';
 import { CookieAuthRefreshProvider } from '@backstage/plugin-auth-react';
 
-import { adrDecoratorFactories } from './decorators';
-import { AdrContentDecorator } from './types';
-import { adrApiRef } from '../../api';
+import { gherkinDecoratorFactories } from './decorators';
+import { GherkinContentDecorator } from './types';
+import { gherkinApiRef } from '../../api';
 import useAsync from 'react-use/esm/useAsync';
 
 /**
- * Component to fetch and render an ADR.
+ * Component to fetch and render an Gherkin.
  *
  * @public
  */
-export const AdrReader = (props: {
-  adr: string;
-  decorators?: AdrContentDecorator[];
+export const GherkinReader = (props: {
+  gherkin: string;
+  decorators?: GherkinContentDecorator[];
 }) => {
-  const { adr, decorators } = props;
+  const { gherkin, decorators } = props;
   const { entity } = useEntity();
   const scmIntegrations = useApi(scmIntegrationsApiRef);
-  const adrApi = useApi(adrApiRef);
-  const adrLocationUrl = getAdrLocationUrl(entity, scmIntegrations);
-  const adrFileLocationUrl = getAdrLocationUrl(entity, scmIntegrations, adr);
+  const gherkinApi = useApi(gherkinApiRef);
+  const gherkinLocationUrl = getGherkinLocationUrl(entity, scmIntegrations);
+  const gherkinFileLocationUrl = getGherkinLocationUrl(entity, scmIntegrations, gherkin);
   const discoveryApi = useApi(discoveryApiRef);
 
   const { value, loading, error } = useAsync(
-    async () => adrApi.readAdr(adrFileLocationUrl),
-    [adrFileLocationUrl],
+    async () => gherkinApi.readGherkin(gherkinFileLocationUrl),
+    [gherkinFileLocationUrl],
   );
 
   const {
     value: backendUrl,
     loading: backendUrlLoading,
     error: backendUrlError,
-  } = useAsync(async () => discoveryApi.getBaseUrl('adr'), []);
-  const adrContent = useMemo(() => {
+  } = useAsync(async () => discoveryApi.getBaseUrl('gherkin'), []);
+  const gherkinContent = useMemo(() => {
     if (!value?.data) {
       return '';
     }
-    const adrDecorators = decorators ?? [
-      adrDecoratorFactories.createRewriteRelativeLinksDecorator(),
-      adrDecoratorFactories.createRewriteRelativeEmbedsDecorator(),
-      adrDecoratorFactories.createFrontMatterFormatterDecorator(),
+    const gherkinDecorators = decorators ?? [
+      // adrDecoratorFactories.createRewriteRelativeLinksDecorator(),
+      // adrDecoratorFactories.createRewriteRelativeEmbedsDecorator(),
+      // adrDecoratorFactories.createFrontMatterFormatterDecorator(),
     ];
 
-    return adrDecorators.reduce(
+    return gherkinDecorators.reduce(
       (content, decorator) =>
-        decorator({ baseUrl: adrLocationUrl, content }).content,
+        decorator({ baseUrl: gherkinLocationUrl, content }).content,
       value.data,
     );
-  }, [adrLocationUrl, decorators, value]);
+  }, [gherkinLocationUrl, decorators, value]);
 
   return (
-    <CookieAuthRefreshProvider pluginId="adr">
+    <CookieAuthRefreshProvider pluginId="gherkin">
       <InfoCard>
         {loading && <Progress />}
 
         {!loading && error && (
-          <WarningPanel title="Failed to fetch ADR" message={error?.message} />
+          <WarningPanel title="Failed to fetch Gherkin" message={error?.message} />
         )}
 
         {!backendUrlLoading && backendUrlError && (
           <WarningPanel
-            title="Failed to fetch ADR images"
+            title="Failed to fetch Gherkin images"
             message={backendUrlError?.message}
           />
         )}
@@ -98,7 +98,7 @@ export const AdrReader = (props: {
           !backendUrlError &&
           value?.data && (
             <MarkdownContent
-              content={adrContent}
+              content={gherkinContent}
               linkTarget="_blank"
               transformImageUri={href => {
                 return `${backendUrl}/image?url=${href}`;
@@ -110,4 +110,4 @@ export const AdrReader = (props: {
   );
 };
 
-AdrReader.decorators = adrDecoratorFactories;
+GherkinReader.decorators = gherkinDecoratorFactories;

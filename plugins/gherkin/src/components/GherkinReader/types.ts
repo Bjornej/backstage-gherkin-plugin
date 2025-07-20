@@ -13,4 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-export type { AdrSearchResultListItemProps } from './AdrSearchResultListItem';
+
+/**
+ * Gherkin content decorator function type. Decorators are responsible for
+ * performing any necessary transformations on the Gherkin content before rendering.
+ * @public
+ */
+export type GherkinContentDecorator = (gherkinInfo: {
+  baseUrl: string;
+  content: string;
+}) => { content: string };

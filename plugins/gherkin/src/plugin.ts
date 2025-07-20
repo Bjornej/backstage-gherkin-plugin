@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { adrApiRef, AdrClient } from './api';
+import { gherkinApiRef, GherkinClient } from './api';
 import {
   createApiFactory,
   createPlugin,
@@ -22,25 +22,23 @@ import {
   discoveryApiRef,
   fetchApiRef,
 } from '@backstage/core-plugin-api';
-import { createSearchResultListItemExtension } from '@backstage/plugin-search-react';
 import { rootRouteRef } from './routes';
-import { AdrSearchResultListItemProps } from './search';
 
 /**
- * The Backstage plugin that holds ADR specific components
+ * The Backstage plugin that holds Gherkin specific components
  * @public
  */
-export const adrPlugin = createPlugin({
-  id: 'adr',
+export const gherkinPlugin = createPlugin({
+  id: 'gherkin',
   apis: [
     createApiFactory({
-      api: adrApiRef,
+      api: gherkinApiRef,
       deps: {
         discoveryApi: discoveryApiRef,
         fetchApi: fetchApiRef,
       },
       factory({ discoveryApi, fetchApi }) {
-        return new AdrClient({ discoveryApi, fetchApi });
+        return new GherkinClient({ discoveryApi, fetchApi });
       },
     }),
   ],
@@ -50,32 +48,14 @@ export const adrPlugin = createPlugin({
 });
 
 /**
- * An extension for browsing ADRs on an entity page.
+ * An extension for browsing Gherkins on an entity page.
  * @public
  */
-export const EntityAdrContent = adrPlugin.provide(
+export const EntityGherkinContent = gherkinPlugin.provide(
   createRoutableExtension({
-    name: 'EntityAdrContent',
+    name: 'EntityGherkinContent',
     component: () =>
-      import('./components/EntityAdrContent').then(m => m.EntityAdrContent),
+      import('./components/EntityGherkinContent').then(m => m.EntityGherkinContent),
     mountPoint: rootRouteRef,
-  }),
-);
-
-/**
- * React extension used to render results on Search page or modal
- *
- * @public
- */
-export const AdrSearchResultListItem: (
-  props: AdrSearchResultListItemProps,
-) => JSX.Element | null = adrPlugin.provide(
-  createSearchResultListItemExtension({
-    name: 'AdrSearchResultListItem',
-    component: () =>
-      import('./search/AdrSearchResultListItem').then(
-        m => m.AdrSearchResultListItem,
-      ),
-    predicate: result => result.type === 'adr',
   }),
 );

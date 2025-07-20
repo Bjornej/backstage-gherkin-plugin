@@ -16,9 +16,9 @@
 import { createRouteRef } from '@backstage/core-plugin-api';
 
 /**
- * Root route ref for the ADR plugin
+ * Root route ref for the Gherkin plugin
  * @public
  */
 export const rootRouteRef = createRouteRef({
-  id: 'adr',
+  id: 'gherkin',
 });

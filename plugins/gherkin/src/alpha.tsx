@@ -25,80 +25,49 @@ import {
   compatWrapper,
   convertLegacyRouteRef,
 } from '@backstage/core-compat-api';
-import { SearchResultListItemBlueprint } from '@backstage/plugin-search-react/alpha';
 import { EntityContentBlueprint } from '@backstage/plugin-catalog-react/alpha';
 import {
-  AdrDocument,
-  isAdrAvailable,
+  GherkinDocument,
+  isGherkinAvailable,
 } from '@backstage-community/plugin-adr-common';
 import { rootRouteRef } from './routes';
-import { adrApiRef, AdrClient } from './api';
+import { gherkinApiRef, GherkinClient } from './api';
 
 export * from './translations';
 
-function isAdrDocument(result: any): result is AdrDocument {
+function isGherkinDocument(result: any): result is GherkinDocument {
   return result.entityRef;
 }
 
 /** @alpha */
-export const adrSearchResultListItemExtension =
-  SearchResultListItemBlueprint.makeWithOverrides({
-    config: {
-      schema: {
-        lineClamp: z => z.number().default(5),
-      },
-    },
-    factory(originalFactory, { config }) {
-      return originalFactory({
-        predicate: result => result.type === 'adr',
-        component: async () => {
-          const { AdrSearchResultListItem } = await import(
-            './search/AdrSearchResultListItem'
-          );
-          return ({ result, ...rest }) =>
-            compatWrapper(
-              isAdrDocument(result) ? (
-                <AdrSearchResultListItem
-                  {...rest}
-                  {...config}
-                  result={result}
-                />
-              ) : null,
-            );
-        },
-      });
-    },
-  });
-
-/** @alpha */
-export const adrEntityContentExtension = EntityContentBlueprint.make({
+export const gherkinEntityContentExtension = EntityContentBlueprint.make({
   name: 'entity',
   params: {
-    defaultPath: '/adrs',
-    defaultTitle: 'ADRs',
-    filter: isAdrAvailable,
+    defaultPath: '/gherkins',
+    defaultTitle: 'Gherkins',
+    filter: isGherkinAvailable,
     routeRef: convertLegacyRouteRef(rootRouteRef),
     loader: async () => {
-      const { EntityAdrContent } = await import(
-        './components/EntityAdrContent'
+      const { EntityGherkinContent } = await import(
+        './components/EntityGherkinContent'
       );
-      return <EntityAdrContent />;
+      return <EntityGherkinContent />;
     },
   },
 });
 
 /** @alpha */
-export const adrApiExtension = ApiBlueprint.make({
-  name: 'adr-api',
+export const gherkinApiExtension = ApiBlueprint.make({
+  name: 'gherkin-api',
   params: {
     factory: createApiFactory({
-      api: adrApiRef,
+      api: gherkinApiRef,
       deps: {
         discoveryApi: discoveryApiRef,
         fetchApi: fetchApiRef,
       },
       factory({ discoveryApi, fetchApi }) {
-        return new AdrClient({ discoveryApi, fetchApi });
+        return new GherkinClient({ discoveryApi, fetchApi });
       },
     }),
   },
@@ -106,10 +75,9 @@ export const adrApiExtension = ApiBlueprint.make({
 
 /** @alpha */
 export default createFrontendPlugin({
-  id: 'adr',
+  id: 'gherkin',
   extensions: [
-    adrSearchResultListItemExtension,
-    adrEntityContentExtension,
-    adrApiExtension,
+    gherkinEntityContentExtension,
+    gherkinApiExtension,
   ],
 });

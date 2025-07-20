@@ -17,66 +17,60 @@
 import { createApiRef } from '@backstage/core-plugin-api';
 
 /**
- * Contains information about an ADR file.
+ * Contains information about an Gherkin file.
  *
  * @public
  */
-export type AdrFileInfo = {
+export type GherkinFileInfo = {
   /** The file type. */
   type: string;
 
-  /** The relative path of the ADR file. */
+  /** The relative path of the Gherkin file. */
   path: string;
 
-  /** The name of the ADR file. */
+  /** The name of the Gherkin file. */
   name: string;
 
-  /** The title of the ADR. */
+  /** The title of the Gherkin. */
   title?: string;
-
-  /** The status of the ADR. */
-  status?: string;
-
-  /** The date of the ADR. */
-  date?: string;
 };
 
 /**
- * The result of listing ADRs.
+ * The result of listing Gherkins.
  *
  * @public
  */
-export type AdrListResult = {
-  data: AdrFileInfo[];
+export type GherkinListResult = {
+  data: GherkinFileInfo[];
 };
 
 /**
- * The result of reading an ADR.
+ * The result of reading an Gherkin.
  *
  * @public
  */
-export type AdrReadResult = {
-  /** The contents of the read ADR file. */
+export type GherkinReadResult = {
+  /** The contents of the read Gherkin file. */
   data: string;
 };
 /**
- * The API used by the adr plugin to list and read ADRs.
+ * The API used by the gherkin plugin to list and read Gherkins.
  *
  * @public
  */
-export interface AdrApi {
-  /** Lists the ADRs at the provided url. */
-  listAdrs(url: string): Promise<AdrListResult>;
+export interface GherkinApi {
+  /** Lists the Gherkins at the provided url. */
+  listGherkins(url: string): Promise<GherkinListResult>;
 
-  /** Reads the contents of the ADR at the provided url. */
-  readAdr(url: string): Promise<AdrReadResult>;
+  /** Reads the contents of the gherkin at the provided url. */
+  readGherkin(url: string): Promise<GherkinReadResult>;
 }
 
 /**
- * ApiRef for the AdrApi.
+ * ApiRef for the GherkinApi.
  *
  * @public
  */
-export const adrApiRef = createApiRef<AdrApi>({
-  id: 'plugin.adr.api',
+export const gherkinApiRef = createApiRef<GherkinApi>({
+  id: 'plugin.gherkin.api',
 });

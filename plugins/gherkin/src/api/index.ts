@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-export { AdrClient } from './AdrClient';
-export type { AdrClientOptions } from './AdrClient';
-export { adrApiRef } from './types';
+export { GherkinClient } from './GherkinClient';
+export type { GherkinClientOptions } from './GherkinClient';
+export { gherkinApiRef } from './types';
 export type {
-  AdrApi,
-  AdrFileInfo,
-  AdrListResult,
-  AdrReadResult,
+  GherkinApi,
+  GherkinFileInfo,
+  GherkinListResult,
+  GherkinReadResult,
 } from './types';

@@ -15,14 +15,14 @@
  */
 
 import { DiscoveryApi, FetchApi } from '@backstage/core-plugin-api';
-import { AdrApi, AdrListResult, AdrReadResult } from './types';
+import { GherkinApi, GherkinListResult, GherkinReadResult } from './types';
 
 /**
  * Options for creating an AdrClient.
  *
  * @public
  */
-export interface AdrClientOptions {
+export interface GherkinClientOptions {
   discoveryApi: DiscoveryApi;
   fetchApi: FetchApi;
 }
@@ -35,17 +35,17 @@ const listEndpoint = 'list';
  *
  * @public
  */
-export class AdrClient implements AdrApi {
+export class GherkinClient implements GherkinApi {
   private readonly discoveryApi: DiscoveryApi;
   private readonly fetchApi: FetchApi;
 
-  constructor(options: AdrClientOptions) {
+  constructor(options: GherkinClientOptions) {
     this.discoveryApi = options.discoveryApi;
     this.fetchApi = options.fetchApi;
   }
 
-  private async fetchAdrApi<T>(endpoint: string, fileUrl: string): Promise<T> {
-    const baseUrl = await this.discoveryApi.getBaseUrl('adr');
+  private async fetchGherkinApi<T>(endpoint: string, fileUrl: string): Promise<T> {
+    const baseUrl = await this.discoveryApi.getBaseUrl('gherkin');
     const targetUrl = `${baseUrl}/${endpoint}?url=${encodeURIComponent(
       fileUrl,
     )}`;
@@ -59,11 +59,11 @@ export class AdrClient implements AdrApi {
     return data;
   }
 
-  async listAdrs(url: string): Promise<AdrListResult> {
-    return this.fetchAdrApi<AdrListResult>(listEndpoint, url);
+  async listGherkins(url: string): Promise<GherkinListResult> {
+    return this.fetchGherkinApi<GherkinListResult>(listEndpoint, url);
   }
 
-  async readAdr(url: string): Promise<AdrReadResult> {
-    return this.fetchAdrApi<AdrReadResult>(readEndpoint, url);
+  async readGherkin(url: string): Promise<GherkinReadResult> {
+    return this.fetchGherkinApi<GherkinReadResult>(readEndpoint, url);
   }
 }

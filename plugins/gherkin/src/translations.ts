@@ -16,11 +16,11 @@
 import { createTranslationRef } from '@backstage/core-plugin-api/alpha';
 
 /** @alpha */
-export const adrTranslationRef = createTranslationRef({
-  id: 'adr',
+export const gherkinTranslationRef = createTranslationRef({
+  id: 'gherkin',
   messages: {
-    contentHeaderTitle: 'Architecture Decision Records',
-    failedToFetch: 'Failed to fetch ADRs',
-    notFound: 'No ADRs found',
+    contentHeaderTitle: 'Gherkin',
+    failedToFetch: 'Failed to fetch Gherkins',
+    notFound: 'No gherkin found',
   },
 });
