@@ -1,0 +1,49 @@
+{
+  "name": "@backstage-community/plugin-gherkin-common",
+  "version": "0.1.0",
+  "description": "Common functionalities for the gherkin plugin",
+  "backstage": {
+    "role": "common-library",
+    "pluginId": "gherkin",
+    "pluginPackages": [
+      "@backstage-community/plugin-gherkin",
+      "@backstage-community/plugin-gherkin-backend",
+      "@backstage-community/plugin-gherkin-common"
+    ]
+  },
+  "publishConfig": {
+    "access": "public",
+    "main": "dist/index.cjs.js",
+    "module": "dist/index.esm.js",
+    "types": "dist/index.d.ts"
+  },
+  "homepage": "https://backstage.io",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/backstage/community-plugins",
+    "directory": "workspaces/gherkin/plugins/gherkin-common"
+  },
+  "license": "Apache-2.0",
+  "sideEffects": false,
+  "main": "src/index.ts",
+  "types": "src/index.ts",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "backstage-cli package build",
+    "clean": "backstage-cli package clean",
+    "lint": "backstage-cli package lint",
+    "prepack": "backstage-cli package prepack",
+    "postpack": "backstage-cli package postpack",
+    "test": "backstage-cli package test"
+  },
+  "dependencies": {
+    "@backstage/catalog-model": "^1.7.4",
+    "@backstage/integration": "^1.17.0",
+    "luxon": "^3.0.0"
+  },
+  "devDependencies": {
+    "@backstage/cli": "^0.33.0"
+  }
+}

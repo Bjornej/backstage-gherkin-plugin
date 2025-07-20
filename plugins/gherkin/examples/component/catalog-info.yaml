@@ -1,0 +1,13 @@
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: component-with-gherkin
+  title: Component With gherkin
+  description: A Service with gherkin registerd
+  annotations:
+    backstage.io/gherkin-location: /docs/features
+spec:
+  type: service
+  lifecycle: experimental
+  owner: user:guest
