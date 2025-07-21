@@ -65,7 +65,7 @@ export async function createRouter(
       const results = await Promise.all(
         files
           .map(async file => {
-            const fileContent = await file.content();
+            //const fileContent = await file.content();
 
             try {
               return {

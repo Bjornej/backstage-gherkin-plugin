@@ -16,7 +16,6 @@
 import {
   coreServices,
   createBackendPlugin,
-  createExtensionPoint,
 } from '@backstage/backend-plugin-api';
 import { createRouter } from './service/router';
 

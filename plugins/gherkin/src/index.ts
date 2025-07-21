@@ -28,6 +28,6 @@ export type {
   GherkinListResult,
   GherkinReadResult,
 } from './api';
-export { isGherkinAvailable } from '@backstage-community/plugin-adr-common';
+export { isGherkinAvailable } from '@backstage-community/plugin-gherkin-common';
 export * from './components/GherkinReader';
 export { gherkinPlugin, EntityGherkinContent } from './plugin';

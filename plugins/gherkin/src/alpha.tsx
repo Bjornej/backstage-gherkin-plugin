@@ -22,22 +22,17 @@ import {
   createFrontendPlugin,
 } from '@backstage/frontend-plugin-api';
 import {
-  compatWrapper,
   convertLegacyRouteRef,
 } from '@backstage/core-compat-api';
 import { EntityContentBlueprint } from '@backstage/plugin-catalog-react/alpha';
 import {
-  GherkinDocument,
   isGherkinAvailable,
-} from '@backstage-community/plugin-adr-common';
+} from '@backstage-community/plugin-gherkin-common';
 import { rootRouteRef } from './routes';
 import { gherkinApiRef, GherkinClient } from './api';
 
 export * from './translations';
 
-function isGherkinDocument(result: any): result is GherkinDocument {
-  return result.entityRef;
-}
 
 /** @alpha */
 export const gherkinEntityContentExtension = EntityContentBlueprint.make({
